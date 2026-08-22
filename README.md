@@ -14,60 +14,52 @@ This project examines automated aspect discovery in e-commerce customer reviews 
 
 ## Project Overview
 
-E-commerce platforms accumulate large volumes of user-generated reviews that capture granular feedback on product quality, usability, delivery experience, and customer support. Manual analysis of such corpora is infeasible at scale. This project implements an end-to-end pipeline that:
+This project investigates automated aspect discovery in e-commerce customer reviews using four topic modeling approaches: classical statistical models, transformer-based methods, and graph-based techniques. The goal is to identify coherent and interpretable product aspects (e.g., quality, delivery, customer service) from noisy user-generated text to support downstream tasks such as aspect-based sentiment analysis and data-driven product improvement.
 
-- Preprocesses review text into suitable representations for NLP and topic modeling.
-- Trains and evaluates several topic modeling algorithms on a shared review dataset.
-- Produces visual and numerical outputs to compare the coherence and interpretability of the discovered topics.
-
-The repository is designed to be reproducible and readable for both academic and applied audiences in data analytics and natural language processing.
+The repository contains a reproducible pipeline for preprocessing reviews, training topic models, and generating visualizations and metrics that compare their performance and interpretability.
 
 ---
 
 ## Research Objectives
 
-- **Data preparation**: Develop a robust preprocessing pipeline for review text, including normalization, tokenization, lemmatization, stopword handling, and domain-specific filtering.
-- **Model implementation**: Implement and configure four topic modeling approaches:
+- **Data preparation**  
+  Build a robust preprocessing pipeline for review text, including normalization, tokenization, lemmatization, stopword handling, and domain-specific filtering.
+
+- **Model implementation**  
+  Implement and configure four topic modelling approaches:
   - Latent Dirichlet Allocation (LDA)
   - Latent Semantic Analysis (LSA)
-  - BERTopic (transformer-based topic modeling)
-  - Graph-Based Topic Modelling (e.g., co-occurrence or similarity graph with community detection)
-- **Evaluation and comparison**:
-  - Quantitatively assess topic coherence and diversity.
-  - Qualitatively assess interpretability and semantic consistency of discovered aspects.
-  - Analyze the strengths and limitations of each approach for e-commerce review analysis.
+  - BERTopic (transformer-based topic modelling)
+  - Graph-based topic modelling (co-occurrence / similarity graph with community detection)
+
+- **Evaluation and comparison**  
+  - Quantitatively assess topic coherence and diversity.  
+  - Qualitatively assess interpretability and semantic consistency of discovered aspects.  
+  - Analyze strengths and limitations of each approach in the context of e-commerce reviews.
 
 ---
 ## Data
 
 ### Source and Scope
 
-The primary dataset consists of e-commerce product reviews stored in a processed CSV file:
+The main dataset consists of e-commerce product reviews stored in a processed CSV file:
 
 - `data/processed/cleaned_reviews_latest.csv`  
-  This file contains the cleaned and preprocessed review text, along with any relevant metadata used in the modeling experiments (e.g., rating, product category, or timestamps, if available).
+  Contains cleaned and preprocessed review text, along with any available metadata (e.g., rating, product category, timestamps).
 
-The raw data and any platform-specific details are not distributed here and should be described separately in accompanying documentation or in the corresponding academic report.
+The original raw data and platform-specific details are not distributed in this repository and should be documented separately in an accompanying academic report or data description.
 
 ### Preprocessing Summary
 
-Preprocessing steps applied to the raw reviews include, where applicable:
+Preprocessing applied to raw reviews includes:
 
 - Text normalization (lowercasing, punctuation and special-character handling).
 - Tokenization and lemmatization.
-- Stopword removal and optional n-gram (phrase) detection.
-- Construction of Bag-of-Words or TF–IDF representations for classical models, and embeddings for transformer-based modeling.
+- Stopword removal and optional n-gram/phrase detection.
+- Construction of Bag-of-Words or TF–IDF representations for LDA/LSA.
+- Generation of dense embeddings for transformer-based modelling (BERTopic).
 
-All of these steps are implemented and documented in the preprocessing notebook (see below).
-
-## Methods and Implementation
-
-The repository includes separate Jupyter notebooks for each major modeling approach. Each notebook can be read as a self-contained report on a specific method, while sharing common preprocessing and evaluation conventions.
-
-### Preprocessing
-
-- `notebooks/dataprocessing.ipynb`  
-  Implements the text preprocessing pipeline and generates `cleaned_reviews_latest.csv` under `data/processed/`. It defines and applies the normalization, tokenization, lemmatization, and filtering rules used throughout the project.
+These steps are implemented in the preprocessing notebook described below.
 
 ### Topic Modeling Notebooks
 
@@ -198,16 +190,16 @@ All notebooks are designed to be executed sequentially, but each can also be run
 
 ## Limitations and Future Work
 
-- The quality and stability of topics depend on dataset characteristics, preprocessing choices, and hyperparameter settings.
-- Transformer-based and graph-based approaches are more computationally demanding than LDA and LSA, which may limit scalability on very large corpora without appropriate infrastructure.
-- The current study focuses on aspect discovery; explicit integration with sentiment analysis and downstream business metrics (e.g., sales, returns, ratings) is left as future work.
+- Topic quality and stability depend heavily on dataset characteristics, preprocessing choices, and hyperparameter settings.  
+- Transformer-based and graph-based approaches are more computationally demanding than LDA/LSA, which may affect scalability on very large corpora.  
+- Current work focuses on aspect discovery; explicit integration with sentiment analysis and business metrics (e.g., sales, returns) is left for future extensions.
 
-Possible extensions include:
+Potential future directions:
 
-- Aspect-based sentiment analysis using discovered topics as aspect candidates.
-- Comparative studies across different product categories or platforms.
-- Temporal analysis of how aspects and topics evolve over time.
-- Integration with interactive dashboards or web applications for real-time exploration.
+- Aspect-based sentiment analysis using discovered topics as aspect candidates.  
+- Comparative studies across product categories or platforms.  
+- Temporal analysis of how aspects and topics evolve over time.  
+- Integration with dashboards or web applications for interactive, real-time exploration.
 
 ## Academic Use and Citation
 
