@@ -14,13 +14,13 @@ This project examines automated aspect discovery in e-commerce customer reviews 
 
 ## Project Overview
 
-Customer reviews on e-commerce platforms contain rich information about product performance, user satisfaction, and recurring issues, yet they are challenging to summarize manually at scale. This project implements an end-to-end NLP pipeline that:
+E-commerce platforms accumulate large volumes of user-generated reviews that capture granular feedback on product quality, usability, delivery experience, and customer support. Manual analysis of such corpora is infeasible at scale. This project implements an end-to-end pipeline that:
 
-- Cleans and preprocesses raw review text.
-- Trains multiple topic modeling algorithms on the same corpus.
-- Evaluates and contrasts their ability to uncover meaningful product aspects and themes.
+- Preprocesses review text into suitable representations for NLP and topic modeling.
+- Trains and evaluates several topic modeling algorithms on a shared review dataset.
+- Produces visual and numerical outputs to compare the coherence and interpretability of the discovered topics.
 
-The repository is organized to facilitate reproducibility, inspection of intermediate results, and reuse in academic work, data analytics portfolios, or further methodological research.[web:4][web:6]
+The repository is designed to be reproducible and readable for both academic and applied audiences in data analytics and natural language processing.
 
 ---
 
@@ -38,160 +38,176 @@ The repository is organized to facilitate reproducibility, inspection of interme
   - Analyze the strengths and limitations of each approach for e-commerce review analysis.
 
 ---
+## Data
 
-## Methodology
+### Source and Scope
 
-### Data Preprocessing
+The primary dataset consists of e-commerce product reviews stored in a processed CSV file:
 
-Review text is processed through a standardized sequence of steps:
+- `data/processed/cleaned_reviews_latest.csv`  
+  This file contains the cleaned and preprocessed review text, along with any relevant metadata used in the modeling experiments (e.g., rating, product category, or timestamps, if available).
 
-- Text normalization (lowercasing, punctuation removal, handling of emojis and special characters).
-- Tokenization and lemmatization using established NLP libraries.
-- Stopword removal and optional n-gram extraction for multi-word aspects (e.g., “battery life”, “delivery time”).
-- Construction of Bag-of-Words, TF–IDF matrices, and dense embeddings where required for specific models.
+The raw data and any platform-specific details are not distributed here and should be described separately in accompanying documentation or in the corresponding academic report.
 
-### Topic Modeling Techniques
+### Preprocessing Summary
 
-- **LDA**: A probabilistic generative model applied to Bag-of-Words representations to obtain baseline topics over word distributions.
-- **LSA**: A matrix factorization approach (typically via truncated SVD) on TF–IDF representations to uncover latent semantic dimensions in the corpus.
-- **BERTopic**: A transformer-based method that combines document embeddings, clustering, and class-based TF–IDF to produce semantically rich topics.
-- **Graph-Based Topic Modelling**: A graph construction over terms (based on co-occurrence or similarity) followed by community detection or clustering to derive topics as dense subgraphs.
+Preprocessing steps applied to the raw reviews include, where applicable:
 
-### Evaluation Strategy
+- Text normalization (lowercasing, punctuation and special-character handling).
+- Tokenization and lemmatization.
+- Stopword removal and optional n-gram (phrase) detection.
+- Construction of Bag-of-Words or TF–IDF representations for classical models, and embeddings for transformer-based modeling.
 
-- Use standard topic coherence metrics (e.g., \(C_v\), \(U_{Mass}\)) to compare models quantitatively.
-- Manually inspect top-ranked terms and representative documents for a subset of topics to assess interpretability.
-- Generate visualizations such as topic distance maps, word clouds, and distribution plots to support analysis and reporting.
+All of these steps are implemented and documented in the preprocessing notebook (see below).
 
----
+## Methods and Implementation
 
-## Dataset
+The repository includes separate Jupyter notebooks for each major modeling approach. Each notebook can be read as a self-contained report on a specific method, while sharing common preprocessing and evaluation conventions.
 
-The project assumes access to a corpus of e-commerce product reviews collected from online marketplaces. Reviews are anonymized and stored under the `data/` directory with clear separation between raw and processed datasets:
+### Preprocessing
 
-- `data/raw/`: Original review text and optional metadata (e.g., rating, product category).
-- `data/processed/`: Cleaned and preprocessed versions used directly in modeling experiments.
+- `notebooks/dataprocessing.ipynb`  
+  Implements the text preprocessing pipeline and generates `cleaned_reviews_latest.csv` under `data/processed/`. It defines and applies the normalization, tokenization, lemmatization, and filtering rules used throughout the project.
 
-Any data usage and sharing must comply with platform policies and institutional guidelines. For academic submission, additional documentation (e.g., `data/README.md`) should detail data provenance, anonymization procedures, licenses, and ethical considerations.[web:6]
+### Topic Modeling Notebooks
 
----
+- `notebooks/Latent_Dirichlet_Allocation(LSA).ipynb`  
+  Implements Latent Dirichlet Allocation (LDA) using probabilistic topic modeling on Bag-of-Words representations. Despite the filename, this notebook is intended for LDA-based experiments (the acronym “LSA” in parentheses is a naming artifact).
 
-## Repository Structure
+- `notebooks/Latent_Semantic_Analysis.ipynb`  
+  Implements Latent Semantic Analysis (LSA) using matrix factorization (typically truncated SVD) on TF–IDF matrices to uncover latent semantic structure in the reviews.
 
-```text
-├── data/
-│   ├── raw/               # Original e-commerce review datasets (if shareable)
-│   └── processed/         # Cleaned and preprocessed review datasets used for modeling
-├── notebooks/             # Jupyter notebooks for preprocessing, modeling, and evaluation
-│   ├── 01_data_preprocessing.ipynb
-│   ├── 02_lda_lsa_modeling.ipynb
-│   ├── 03_bertopic_modeling.ipynb
-│   ├── 04_graph_topic_modeling.ipynb
-│   └── 05_evaluation_visualization.ipynb
-├── visualizations/        # Charts, graphs, and HTML visualizations (e.g., topic distance maps)
-│   ├── coherence_scores.png
-│   ├── topic_wordclouds/
-│   └── ber_topic_map.html
-├── src/                   # Optional: reusable Python modules
-│   ├── data_utils.py
-│   ├── modeling_utils.py
-│   └── evaluation_utils.py
-├── requirements.txt       # Python dependencies required to run the project
-└── README.md              # Project documentation
-```
+- `notebooks/BERTOPIC_.ipynb`  
+  Implements BERTopic, a transformer-based topic modeling framework. This notebook builds document embeddings, performs clustering, and derives topics using class-based TF–IDF. It also produces several interactive visualizations saved under `visualizations/interactive/`.
 
-This structure follows common best practices for machine learning and data science projects, emphasizing reproducibility and clarity.[web:11][web:15]
+- `notebooks/Graph_Based.ipynb`  
+  Implements a graph-based topic modeling approach, typically by constructing a term co-occurrence or similarity graph and applying community detection or clustering to identify dense subgraphs corresponding to topics or aspects.
 
----
+Each notebook reports experimental settings, intermediate results, and selected qualitative interpretations, and together they form the methodological backbone of the study.
 
-## Getting Started
+## Visualizations and Results
 
-### Prerequisites
+Visual outputs are organized in the `visualizations/` directory.
 
-- Python **3.8+**
-- `pip` or `conda` for dependency management
-- Jupyter Notebook or JupyterLab
-- (Recommended) a virtual environment tool such as `venv` or `conda`
+### Interactive Visualizations
 
-### Installation
+Under `visualizations/interactive/`, the following HTML files provide interactive inspection of topic structures:
 
-1. Clone the repository:
+- `BERTopic_Heatmap.html`  
+  Heatmap representation of topic-term or topic-document relationships derived from BERTopic.
 
-   ```bash
-   git clone https://github.com/<your-username>/<your-repo-name>.git
-   cd <your-repo-name>
-   ```
+- `BERTopic_Hierarchy.html`  
+  Hierarchical clustering visualization of BERTopic topics, illustrating topic mergers and relationships.
 
-2. Create and activate a virtual environment:
+- `BERTopic_Intertopic_Distance.html`  
+  Intertopic distance map showing the relative positions of topics in an embedding space.
 
-   ```bash
-   python -m venv .venv
-   source .venv/bin/activate      # On Windows: .venv\Scripts\activate
-   ```
+- `BERTopic_Top10_Barchart.html`  
+  Bar chart visualization of the top terms for selected BERTopic topics.
 
-3. Install dependencies:
+- `lda_visualization.html`  
+  Interactive visualization for LDA topics (e.g., using pyLDAvis or similar tools), enabling exploration of topic-term relationships and topic prevalence.
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+## Interactive Visualizations
 
-### Running the Analysis
+- [BERTopic Intertopic Distance Map](https://htmlpreview.github.io/?https://github.com/FELCIASIJI/automated-aspect-discovery-ecommerce-reviews/blob/feature/readme/visualizations/interactive/BERTopic_Intertopic_Distance.html)
+- [BERTopic Hierarchy](https://htmlpreview.github.io/?https://github.com/FELCIASIJI/automated-aspect-discovery-ecommerce-reviews/blob/feature/readme/visualizations/interactive/BERTopic_Hierarchy.html)
+- [BERTopic Heatmap](https://htmlpreview.github.io/?https://github.com/FELCIASIJI/automated-aspect-discovery-ecommerce-reviews/blob/feature/readme/visualizations/interactive/BERTopic_Heatmap.html)
+- [BERTopic Top-10 Terms Bar Chart](https://htmlpreview.github.io/?https://github.com/FELCIASIJI/automated-aspect-discovery-ecommerce-reviews/blob/feature/readme/visualizations/interactive/BERTopic_Top10_Barchart.html)
+- [LDA Topic Visualization](https://htmlpreview.github.io/?https://github.com/FELCIASIJI/automated-aspect-discovery-ecommerce-reviews/blob/feature/readme/visualizations/interactive/lda_visualization.html)
 
-1. Launch Jupyter:
+### Static Result Figures
 
-   ```bash
-   jupyter notebook
-   ```
+Under `visualizations/results/`, static figures summarize key aspects of the LSA experiments:
 
-2. Execute the notebooks in the following order:
+- `LSA_Coherence_Scalability.png`  
+  Plots topic coherence scores as a function of the number of topics or corpus size, illustrating scalability and quality trade-offs for LSA.
+  
+  ![LSA Coherence vs Number of Topics](visualizations/results/LSA_Coherence_Scalability.png)
+  
 
-   1. `01_data_preprocessing.ipynb`
-   2. `02_lda_lsa_modeling.ipynb`
-   3. `03_bertopic_modeling.ipynb`
-   4. `04_graph_topic_modeling.ipynb`
-   5. `05_evaluation_visualization.ipynb`
+- `LSA_Top_Terms.png`  
+  Shows the top terms associated with selected LSA components/topics.
+  
+  ![Top Terms for Selected LSA Topics](visualizations/results/LSA_Top_Terms.png)
+  
 
-3. Generated figures and HTML files will be written to the `visualizations/` directory for inclusion in reports or presentations.
+- `LSA_Top_Terms_Nine_Topics.png`  
+  Provides a more detailed view of top terms for nine specific LSA topics, facilitating manual interpretation.
+  
+  ![Top Terms Associated with Nine LSA Topics](visualizations/results/LSA_Top_Terms_Nine_Topics.png)
+  
 
----
+- `LSA_Training_Time_Scalability.png`  
+  Reports training time as a function of corpus size or number of topics, highlighting computational considerations for LSA.
+  
+  ![LSA Training Time Across Dataset Sizes](visualizations/results/LSA_Training_Time_Scalability.png)
+  
+  
+These visualizations are intended to be referenced directly in academic reports, presentations, or technical documentation accompanying the project.
 
-## Experiments and Results
+## File and Directory Overview
 
-The experimental design focuses on understanding how each topic modeling approach behaves on the same review corpus:
+At the root of the repository:
 
-- **Hyperparameter exploration**: Varying the number of topics and relevant model-specific parameters to study their impact on coherence and interpretability.
-- **Quantitative evaluation**: Reporting average coherence scores and other relevant metrics for each model.
-- **Qualitative assessment**: Presenting selected topics (e.g., delivery experience, product durability, pricing) and discussing their semantic clarity and usefulness.
-- **Visual analysis**: Including topic distance plots, term-frequency visualizations, and word clouds for key topics.
+- `README.md`  
+  This documentation file, describing the project aims, data, methods, and outputs.
 
-These outputs are intended to be directly referenced in academic project reports, theses, and technical presentations.[web:12][web:14]
+- `requirements.txt`  
+  Lists Python package dependencies required to run the notebooks and reproduce the analysis.
 
----
+Core directories:
 
-## Applications
+- `data/processed/`  
+  Contains `cleaned_reviews_latest.csv`, the preprocessed review dataset used in all modeling notebooks.
 
-The findings of this project can be applied in several contexts:
+- `notebooks/`  
+  Contains Jupyter notebooks for preprocessing and each modeling approach (`dataprocessing.ipynb`, `Latent_Dirichlet_Allocation(LSA).ipynb`, `Latent_Semantic_Analysis.ipynb`, `BERTOPIC_.ipynb`, `Graph_Based.ipynb`).
 
-- **Product management**: Prioritizing improvements by identifying frequently mentioned aspects and recurring complaints.
-- **Customer experience and operations**: Monitoring themes related to logistics, packaging, and service quality at scale.
-- **Business intelligence**: Integrating discovered aspects into dashboards and aligning them with rating distributions, returns, or sales performance.
-- **Teaching and research**: Providing an example of an end-to-end topic modeling study on real-world text data, suitable for coursework and methodological demonstrations.
+- `visualizations/interactive/`  
+  Contains interactive HTML visualizations for BERTopic and LDA.
 
----
+- `visualizations/results/`  
+  Contains static PNG figures summarizing key LSA results.
+
+This organization separates data, analysis notebooks, and results, following common conventions in data science and research-oriented repositories.
+
+## Reproducibility and Usage
+
+### Software Requirements
+
+The analysis environment is based on Python (version 3.8 or later is recommended). All required libraries are specified in `requirements.txt`. To reproduce the experiments:
+
+1. Create a virtual environment (optional but recommended).
+2. Install the dependencies listed in `requirements.txt`.
+3. Ensure that `data/processed/cleaned_reviews_latest.csv` is present.
+
+### Running the Notebooks
+
+A typical reproduction workflow is:
+
+1. Open `notebooks/dataprocessing.ipynb` to inspect or regenerate the processed dataset if needed.
+2. Run the modeling notebooks:
+   - `Latent_Dirichlet_Allocation(LSA).ipynb`
+   - `Latent_Semantic_Analysis.ipynb`
+   - `BERTOPIC_.ipynb`
+   - `Graph_Based.ipynb`
+3. Inspect the generated outputs in `visualizations/interactive/` and `visualizations/results/`.
+
+All notebooks are designed to be executed sequentially, but each can also be run independently, provided the processed data file is available.
 
 ## Limitations and Future Work
 
-- Topic quality is sensitive to preprocessing decisions, the choice of hyperparameters, and the characteristics of the review corpus.
-- Transformer-based methods (e.g., BERTopic) impose higher computational requirements compared with LDA and LSA.
-- Graph-based models depend on the definition of term similarity and graph construction strategy, which may vary across domains.
+- The quality and stability of topics depend on dataset characteristics, preprocessing choices, and hyperparameter settings.
+- Transformer-based and graph-based approaches are more computationally demanding than LDA and LSA, which may limit scalability on very large corpora without appropriate infrastructure.
+- The current study focuses on aspect discovery; explicit integration with sentiment analysis and downstream business metrics (e.g., sales, returns, ratings) is left as future work.
 
-Potential extensions include:
+Possible extensions include:
 
-- Incorporating aspect-based sentiment analysis using topics as aspect candidates.
-- Comparing review themes across platforms, product categories, or time periods.
-- Developing interactive tools (e.g., dashboards or web applications) for exploring topics in real time.
-
----
+- Aspect-based sentiment analysis using discovered topics as aspect candidates.
+- Comparative studies across different product categories or platforms.
+- Temporal analysis of how aspects and topics evolve over time.
+- Integration with interactive dashboards or web applications for real-time exploration.
 
 ## Academic Use and Citation
 
@@ -224,6 +240,9 @@ While the primary focus of this repository is academic experimentation, contribu
 
 ## Contact
 
-**Author**: *Felcia Sairah Siji*
+**Author**: *Felcia Sairah Siji*  
 **Email**: sijifelcia7@gmail.com  
 **Affiliation**: MSc Data Analytics, Technological University of the Shannon: Midlands, Athlone, Ireland.
+
+
+
